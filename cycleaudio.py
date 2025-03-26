@@ -17,11 +17,11 @@ gi.require_version("Gtk", "3.0")
 gi.require_version("GLib", "2.0")
 gi.require_version('AyatanaAppIndicator3', '0.1')
 logger.info('Import Gtk')
-from gi.repository import Gtk as gtk
+from gi.repository import Gtk as gtk # type: ignore
 logger.info('Import Glib')
-from gi.repository import GLib as glib
+from gi.repository import GLib as glib # type: ignore
 logger.info('Import AppIndicator')
-from gi.repository import AyatanaAppIndicator3 as appindicator
+from gi.repository import AyatanaAppIndicator3 as appindicator # type: ignore
 
 CUR_DIR = Path(__file__).parent
 HEADPHONES_PATH = CUR_DIR / "headphones.png"
@@ -47,23 +47,23 @@ class Prog:
     
     def mainloop(self):
         logger.info('Starting Main Loop')
-        gtk.main()
+        gtk.main() # type: ignore
 
     def make_menu(self):
         logger.info('Building Menu')
-        menu = gtk.Menu()
+        menu = gtk.Menu() # type: ignore
         
         logger.info('Making device menu')
-        self.device_menu_item = gtk.MenuItem(label='???')
+        self.device_menu_item = gtk.MenuItem(label='???') # type: ignore
         self.device_menu_item.set_sensitive(False)
         menu.append(self.device_menu_item)
         
         logger.info('Making Swap and Remove Menu')
-        menu.append(gtk.SeparatorMenuItem())
-        swap_menu = gtk.MenuItem(label='Swap Output')
+        menu.append(gtk.SeparatorMenuItem()) # type: ignore
+        swap_menu = gtk.MenuItem(label='Swap Output') # type: ignore
         swap_menu.connect('activate', self.run_cycle_audio)
         menu.append(swap_menu)
-        exit_item = gtk.MenuItem(label='Remove App Indicator')
+        exit_item = gtk.MenuItem(label='Remove App Indicator') # type: ignore
         exit_item.connect('activate', self.close)
         menu.append(exit_item)
         
@@ -141,7 +141,7 @@ class Prog:
 
     def close(self, _):
         logger.info("Closing...")
-        gtk.main_quit()
+        gtk.main_quit() # type: ignore
 
 if __name__ == "__main__":
     logger.info("Starting Program")
