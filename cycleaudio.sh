@@ -29,7 +29,7 @@ setdevice () {
 }
 
 # start the icon program
-[[ -z $(ps -fA | grep  "python.*cycleaudio.py" | grep -v 'grep') ]] && python3 $SCRIPT_DIR/cycleaudio.py
+[[ -z $(ps -fA | grep  "python.*cycleaudio.py" | grep -v 'grep') ]] && python3 $SCRIPT_DIR/cycleaudio.py &
 
 default_sink=$(pactl info | grep -P -o "(?<=Default Sink: ).*")
 
