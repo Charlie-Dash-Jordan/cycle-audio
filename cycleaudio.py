@@ -7,7 +7,14 @@ import traceback
 from tkinter.messagebox import showerror
 import logging
 logger = logging.getLogger(__name__)
-logging.basicConfig(filename='cycleaudio.log', level=logging.INFO, filemode='w')
+CUR_DIR = Path(__file__).parent
+logging.basicConfig(
+    filename=CUR_DIR / 'cycleaudio.log',
+    level=logging.INFO,
+    filemode='w',
+    format="%(asctime)s.%(msecs)3d | %(levelname)s | %(funcName)21s | %(msg)s",
+    datefmt="%H:%M:%S"
+)
 
 logger.info('Import gi')
 import gi
@@ -23,7 +30,6 @@ from gi.repository import GLib as glib # type: ignore
 logger.info('Import AppIndicator')
 from gi.repository import AyatanaAppIndicator3 as appindicator # type: ignore
 
-CUR_DIR = Path(__file__).parent
 HEADPHONES_PATH = CUR_DIR / "headphones.png"
 SPEAKER_PATH = CUR_DIR / "speaker.png"
 QUESTION_PATH = CUR_DIR / "question.png"
@@ -113,7 +119,11 @@ class Prog:
         self.dev_name = dev_name
 
     def get_audio_device(self, quiet=False):
-        logger.info("Running getdevname.sh")
+        if quiet:
+            log = logger.debug
+        else:
+            log = logger.info
+        log("Running getdevname.sh")
         p = subprocess.Popen(
             str(CUR_DIR / "getdevname.sh"),
             shell=True,
@@ -122,13 +132,12 @@ class Prog:
             stderr=subprocess.STDOUT,
         )
         if p.stdout == None:
-            logger.info("p.stdout == None")
+            log("p.stdout == None")
             return
         for line in iter(p.stdout.readline, ''):
-            if not quiet:
-                logger.info("p.stdout: " + line.rstrip())
+            log("p.stdout: " + line.rstrip())
             if line.startswith('DEVNAME='):
-                logger.info("DEVNAME found")
+                log("DEVNAME found")
                 dev_name = line[8:-1]
                 return dev_name
 
