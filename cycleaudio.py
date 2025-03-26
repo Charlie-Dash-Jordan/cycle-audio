@@ -9,7 +9,7 @@ import logging
 logger = logging.getLogger(__name__)
 CUR_DIR = Path(__file__).parent
 logging.basicConfig(
-    filename=CUR_DIR / 'cycleaudio.log',
+    filename=CUR_DIR / '.cycleaudio.log',
     level=logging.INFO,
     filemode='w',
     format="%(asctime)s.%(msecs)3d | %(levelname)s | %(funcName)21s | %(msg)s",
