@@ -1,6 +1,12 @@
 # !/usr/bin/python
 # cycleaudio.py, Charlie Jordan, 3/24/2025
 
+################ REQUIREMENTS ##########
+# linux pulseaudio-utils
+# python3-tk
+################ END ###################
+
+
 from pathlib import Path
 import subprocess
 import traceback
