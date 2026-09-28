@@ -18,7 +18,7 @@ logging.basicConfig(
     filename=CUR_DIR / '.cycleaudio.log',
     level=logging.INFO,
     filemode='w',
-    format="%(asctime)s.%(msecs)3d | %(levelname)s | %(funcName)21s | %(msg)s",
+    format="%(asctime)s.%(msecs)03d | %(levelname)s | %(funcName)21s | %(msg)s",
     datefmt="%H:%M:%S"
 )
 
