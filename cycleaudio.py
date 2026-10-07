@@ -40,7 +40,6 @@ HEADPHONES_PATH = CUR_DIR / "headphones.png"
 SPEAKER_PATH = CUR_DIR / "speaker.png"
 QUESTION_PATH = CUR_DIR / "question.png"
 
-
 class Prog:
     def __init__(self):
         logger.info('Build indicator')
@@ -72,10 +71,10 @@ class Prog:
         
         logger.info('Making Swap and Remove Menu')
         menu.append(gtk.SeparatorMenuItem()) # type: ignore
-        swap_menu = gtk.MenuItem(label='Swap Output') # type: ignore
+        swap_menu = gtk.MenuItem(label='Cycle Output') # type: ignore
         swap_menu.connect('activate', self.run_cycle_audio)
         menu.append(swap_menu)
-        exit_item = gtk.MenuItem(label='Remove App Indicator') # type: ignore
+        exit_item = gtk.MenuItem(label='Remove Icon & Close') # type: ignore
         exit_item.connect('activate', self.close)
         menu.append(exit_item)
         
@@ -99,29 +98,40 @@ class Prog:
             # print(line, end='', flush=True)
             logger.info("p.stdout: " + line.rstrip())
             if line.startswith('DEVNAME='):
-                dev_name = line[8:-1]
+                dev_name = line[8:]
                 logger.info("DEVNAME found")
                 self.set_icon_from_dev_name(dev_name)
                 break
     
     def set_icon_from_dev_name(self, dev_name):
+        lines = []
+        try:
+            with open(CUR_DIR / 'dev2name.txt') as file:
+                lines = [x.rstrip('\n') for x in file.readlines()[1:]]
+        except OSError as e:
+            logger.error(f"OSError reading dev2name.txt: {e}")
+        nice_name = "Unknown"
+        icon_code = "0"
+
+        for line in lines:
+            if line.startswith(dev_name + '|'):
+                _, nice_name, icon_code = line.split('|')
+                break
+        match icon_code:
+            case "1":
+                path = HEADPHONES_PATH
+            case "2":
+                path = SPEAKER_PATH
+            case _:
+                path = QUESTION_PATH
+
         logger.info("Setting icon from dev name")
         logger.info("dev_name: " + dev_name)
-        if dev_name == 'Line Out':
-            path = str(HEADPHONES_PATH)
-            text =  "Headphones"
-        elif dev_name == 'Speakers':
-            path = str(SPEAKER_PATH)
-            text =  "Speakers"
-        else:
-            path = str(QUESTION_PATH)
-            text =  "Unknown"
-        logger.info("path: " + path)
-        logger.info("text: " + text)
-        logger.info("text: " + text)
-        self.indicator.set_icon_full(path, text)
+        logger.info(f"path: {path}")
+        logger.info(f"nice_name: {nice_name}")
+        self.indicator.set_icon_full(str(path), nice_name)
         logger.info("Setting Label")
-        self.device_menu_item.set_label(f"Device: {text}")
+        self.device_menu_item.set_label(f"Device: {nice_name}")
         self.dev_name = dev_name
 
     def get_audio_device(self, quiet=False):
@@ -137,15 +147,11 @@ class Prog:
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
         )
+        p.wait()
         if p.stdout == None:
             log("p.stdout == None")
             return
-        for line in iter(p.stdout.readline, ''):
-            log("p.stdout: " + line.rstrip())
-            if line.startswith('DEVNAME='):
-                log("DEVNAME found")
-                dev_name = line[8:-1]
-                return dev_name
+        return p.stdout.read().rstrip('\n')
 
     def watch_swap(self):
         new_dev_name = self.get_audio_device(quiet=True)

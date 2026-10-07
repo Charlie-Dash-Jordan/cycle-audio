@@ -1,0 +1,4 @@
+# nice name mapping, use a bar as the only separator
+alsa_output.usb-Bose_Corporation_Bose_QC_Ultra_2_HP__USB__T605906061189329101EL10-02.analog-stereo|Bose QC Ultra Headphones|1
+alsa_output.pci-0000_29_00.1.hdmi-stereo|Speakers|2
+alsa_output.pci-0000_2b_00.4.analog-stereo|Line Out / Headphones|1
