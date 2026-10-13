@@ -17,6 +17,11 @@ setdevice () {
     product_name=$(
         grep -oP "(?<=device.product.name = \").+(?=\")" -m 1 <<< "$device_info")
 
+    if [[ -z $product_name ]] then
+        product_name=$(
+            grep -oP "(?<=device.description = \").+(?=\")" -m 1 <<< "$device_info")
+    fi
+
     mapping=$(cat $SCRIPT_DIR/dev2name.txt  | grep "^$1|")
     if [[ -n $mapping ]] then
         nice_name=$(cut -d "|" -f 2 <<< "$mapping")
